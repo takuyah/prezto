@@ -11,3 +11,24 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # Customize to your needs...
+
+# zsh-completions
+fpath=(/usr/local/share/zsh-completions $fpath)
+
+# copy latex template to current directory
+newtex() { cp /Users/takuya/Dropbox/todai/LATEX/template.tex ./$@.tex && echo "cp ~/Dropbox/todai/LATEX/template.tex ./$@.tex"}
+
+# batch convert png to eps in current directory
+png2eps() { for file in *.png
+convert $file ${file%%.*}.eps }
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+eval "$(rbenv init -)"
+
+source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/takuyah/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/takuyah/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/takuyah/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/takuyah/google-cloud-sdk/completion.zsh.inc'; fi
