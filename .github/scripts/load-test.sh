@@ -6,14 +6,19 @@ set -euo pipefail
 repo="$(cd "$(dirname "$0")/../.." && pwd)"
 
 home="$(mktemp -d)"
-trap 'rm -rf "$home"' EXIT
+# Prezto compiles zcompdump in the background, so cleanup can race it.
+trap 'rm -rf "$home" 2>/dev/null || true' EXIT
 ln -s "$repo" "$home/.zprezto"
 for rc in zlogin zlogout zpreztorc zprofile zshenv zshrc; do
   ln -s "$home/.zprezto/runcoms/$rc" "$home/.$rc"
 done
 
 stderr="$home/stderr"
-HOME="$home" TERM=xterm-256color zsh -i -l -c '
+# Debian/Ubuntu's /etc/zsh/zshrc runs its own bare `compinit` unless
+# skip_global_compinit is set; on CI runners that call aborts on the image's
+# insecure fpath dirs. Prezto runs compinit itself, so skip the global one
+# to test Prezto's startup rather than the runner image's.
+HOME="$home" TERM=xterm-256color skip_global_compinit=1 zsh -i -l -c '
   zstyle -a ":prezto:load" pmodule wanted
   failed=0
   for m in $wanted; do
