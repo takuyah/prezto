@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install zsh
+        run: sudo apt-get update -q && sudo apt-get install -y -q zsh
+
+      - name: Syntax check
+        run: .github/scripts/syntax-check.sh
+
+      - name: Load test (default zpreztorc)
+        run: .github/scripts/load-test.sh
